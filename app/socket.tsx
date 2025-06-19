@@ -14,7 +14,7 @@ import { io, Socket } from 'socket.io-client';
 
 const SOCKET_URL = 'http://192.168.1.10:3000';
 
-const ChatScreen: React.FC = () => {
+const ChatScreen = () => {
   const name= useLocalSearchParams();
   const id = name.name;
   if(typeof id!=='string' || id.length===0){

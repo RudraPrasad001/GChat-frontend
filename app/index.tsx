@@ -4,6 +4,7 @@ import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function Index() {
   const [name, setName] = useState<string | null>(null);
+  const [room, setRoom] = useState<string | null>(null);
 
   return (
     <View style={styles.container}>
@@ -15,6 +16,12 @@ export default function Index() {
         style={styles.input}
         onChangeText={(text) => setName(text)}
       />
+      <TextInput
+        placeholder="Server Room"
+        placeholderTextColor="#aaa"
+        style={styles.input}
+        onChangeText={(text) => setRoom(text)}
+      />
 
       <Pressable
         style={({ pressed }) => [
@@ -24,7 +31,7 @@ export default function Index() {
         onPress={() =>
           router.push({
             pathname: "/socket",
-            params: { name: name },
+            params: { name: name,server:room },
           })
         }
       >

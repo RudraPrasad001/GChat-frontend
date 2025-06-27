@@ -16,6 +16,7 @@ const SOCKET_URL = 'http://192.168.1.10:3000';
 
 const ChatScreen = () => {
   const name= useLocalSearchParams();
+  const server = useLocalSearchParams();
   const id = name.name;
   if(typeof id!=='string' || id.length===0){
     router.back();
@@ -23,6 +24,7 @@ const ChatScreen = () => {
   }
   const [text, setText] = useState('');
   const socketRef = useRef<Socket | null>(null);
+  const scrollRef= useRef<ScrollView|null>(null);
   const [messages, setMessages] = useState<{text:string,fromMe:boolean,name:string}[]>([]);
 
   useEffect(() => {
@@ -36,6 +38,7 @@ const ChatScreen = () => {
     socketRef.current.on('connect', () => {
       console.log('Connected to socket server');
     });
+     socketRef.current?.emit('joinRoom', server.server);
 
     socketRef.current.on('message', ({text,id}) => {
       console.log('Received:', text);
@@ -50,8 +53,8 @@ const ChatScreen = () => {
   const send = () => {
     if (text.trim().length === 0) return;
 
-    if (socketRef.current) {
-      socketRef.current.emit('message', {text,id});
+    if (socketRef.current ) {
+      socketRef.current.emit('message', {text:text,id:id,server:server});
       setMessages((prev) => [...prev, {text,fromMe:true,name:id as string}]); // You can tag messages later if you want to distinguish self vs others
       setText('');
     } else {
@@ -65,7 +68,7 @@ const ChatScreen = () => {
       behavior='height'
       keyboardVerticalOffset={100}
     >
-      <ScrollView style={styles.chatContainer} contentContainerStyle={{ paddingVertical: 10 }} automaticallyAdjustKeyboardInsets={true}>
+      <ScrollView ref={scrollRef} onContentSizeChange={()=>scrollRef.current?.scrollToEnd({animated:true})} style={styles.chatContainer} contentContainerStyle={{ paddingVertical: 10 }} automaticallyAdjustKeyboardInsets={true} >
         {messages.map((m, idx) => (
           <View
             key={idx}
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#007aff',
   },
   messageText: {
-    color: 'white',
+    color: 'rgb(36, 41, 190)',
     fontSize: 16,
   },
   inputContainer: {

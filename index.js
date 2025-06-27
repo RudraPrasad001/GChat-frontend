@@ -23,9 +23,16 @@ app.get("/", (req, res) => {
 io.on('connection', (socket) => {
   console.log("Socket connected:", socket.id);
 
-  socket.on('message', ({text,id}) => {
+  socket.on('joinRoom', (roomId) => {
+  socket.join(roomId);
+});
+
+
+  socket.on('message', ({text,id,server}) => {
     console.log('Received message:', text);
-    socket.broadcast.emit('message',{text,id});
+    console.log("from server: ");
+    console.log(server.server);
+    socket.to(server.server).emit('message',{text,id});
   });
 
   socket.on('disconnect', () => {

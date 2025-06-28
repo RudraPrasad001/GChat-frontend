@@ -23,6 +23,7 @@ const ChatScreen = () => {
     Alert.alert("Enter a Valid Name");
   }
   const [text, setText] = useState('');
+  const keyBoardRef = useRef<KeyboardEvent|null>(null);
   const socketRef = useRef<Socket | null>(null);
   const scrollRef= useRef<ScrollView|null>(null);
   const [messages, setMessages] = useState<{text:string,fromMe:boolean,name:string}[]>([]);
@@ -91,6 +92,7 @@ const ChatScreen = () => {
           onChangeText={setText}
           placeholder="Type something"
           placeholderTextColor="gray"
+          onSubmitEditing={send}
         />
         <Button title="Send" onPress={send} />
       </View>
